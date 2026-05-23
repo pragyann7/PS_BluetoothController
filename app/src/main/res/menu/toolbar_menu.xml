@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <item
+        android:id="@+id/scanDevice"
+        android:title="Scan Device"
+        android:icon="@drawable/disconnected"
+        app:showAsAction="ifRoom"/>
+
+    <item
+        android:id="@+id/gamingPad"
+        android:title="Gaming Pad"
+        android:icon="@drawable/controller"
+        app:showAsAction="ifRoom"/>
+
+    <item
+        android:id="@+id/numPad"
+        android:title="Number Pad"
+        android:icon="@drawable/numbers"
+        app:showAsAction="ifRoom"/>
+
+</menu>
