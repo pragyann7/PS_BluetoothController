@@ -46,6 +46,8 @@ public class MainActivity extends AppCompatActivity {
 
     private String lastCommand = "";
     private boolean isConnected = false;
+    private boolean useArrows = false;
+    private boolean useAuto = false;
 
     private enum LayoutState { MAIN, SCAN, GAMING, DIMMER, SWITCHES }
     private LayoutState currentLayout = LayoutState.MAIN;
@@ -140,10 +142,51 @@ public class MainActivity extends AppCompatActivity {
 
         JoystickView joystick = findViewById(R.id.joystickView);
         TextView outputDisplay = findViewById(R.id.outputDisplay);
+        View arrowKeysContainer = findViewById(R.id.arrowKeysContainer);
+        SwitchMaterial arrowSwitch = findViewById(R.id.switch1);
+
+        if (arrowSwitch != null) {
+            arrowSwitch.setChecked(!useArrows);
+
+            // Initial visibility update
+            updateControlsVisibility(useArrows, joystick, arrowKeysContainer);
+
+            arrowSwitch.setOnCheckedChangeListener((buttonView, isChecked) -> {
+                useArrows = !isChecked;
+                updateControlsVisibility(!isChecked, joystick, arrowKeysContainer);
+            });
+        }
+
+        setupArrowButton(R.id.btnUp, "0,-100\n", "0,0\n", "FORWARD", outputDisplay);
+        setupArrowButton(R.id.btnDown, "0,100\n", "0,0\n", "BACKWARD", outputDisplay);
+        setupArrowButton(R.id.btnLeft, "-100,0\n", "0,0\n", "LEFT", outputDisplay);
+        setupArrowButton(R.id.btnRight, "100,0\n", "0,0\n", "RIGHT", outputDisplay);
+
+        SwitchMaterial autoSwitch = findViewById(R.id.switchAuto);
+        if (autoSwitch != null) {
+            autoSwitch.setChecked(useAuto);
+            autoSwitch.setOnCheckedChangeListener((buttonView, isChecked) -> {
+                useAuto = isChecked;
+                buttonView.performHapticFeedback(HapticFeedbackConstants.VIRTUAL_KEY);
+                updateControlsVisibility(useArrows, joystick, arrowKeysContainer);
+                if (isChecked) {
+                    sendData("A_MODE\n");
+                    if (outputDisplay != null) {
+                        outputDisplay.setText("AUTO MODE");
+                    }
+                } else {
+                    sendData("M_MODE\n");
+                    if (outputDisplay != null) {
+                        outputDisplay.setText("MANUAL MODE");
+                    }
+                }
+            });
+        }
 
         if (joystick != null) {
-
             joystick.setJoystickListener((xPercent, yPercent, id) -> {
+                if (useAuto) return; // Block in Auto mode
+                if (useArrows) return; // Ignore joystick if arrow mode is active
 
                 int x = (int)(xPercent * 100);
                 int y = (int)(yPercent * 100);
@@ -207,44 +250,102 @@ public class MainActivity extends AppCompatActivity {
             });
         }
 
-        setupGamingButton(R.id.btnA, "A_ON\n", "BUTTON A", outputDisplay);
-        Button btnB = findViewById(R.id.btnB);
-
-        btnB.setOnTouchListener((v, event) -> {
-
-            switch (event.getAction()) {
-
-                case MotionEvent.ACTION_DOWN:
-                    v.performHapticFeedback(HapticFeedbackConstants.VIRTUAL_KEY);
-                    sendData("B_ON\n");
-                    if (outputDisplay != null) {
-                        outputDisplay.setText("BUTTON B");
-                    }
-                    return true;
-
-                case MotionEvent.ACTION_UP:
-                    sendData("B_OFF\n");
-                    if (outputDisplay != null) {
-                        outputDisplay.setText("STOP");
-                    }
-                    return true;
-            }
-
-            return false;
-        });
-        setupGamingButton(R.id.btnX, "X_ON\n", "BUTTON X", outputDisplay);
-        setupGamingButton(R.id.btnY, "Y_ON\n", "BUTTON Y", outputDisplay);
+        setupGamingButton(R.id.btnA, "A_ON\n", "A_OFF\n", "BUTTON A", outputDisplay);
+        setupGamingButton(R.id.btnB, "B_ON\n", "B_OFF\n", "BUTTON B", outputDisplay);
+        setupGamingButton(R.id.btnX, "X_ON\n", "X_OFF\n", "BUTTON X", outputDisplay);
+        setupGamingButton(R.id.btnY, "Y_ON\n", "Y_OFF\n", "BUTTON Y", outputDisplay);
     }
 
-    private void setupGamingButton(int id, String command, String label, TextView display) {
+    private void updateControlsVisibility(boolean isArrowMode, View joystick, View arrowKeysContainer) {
+        if (isArrowMode) {
+            if (joystick != null) joystick.setVisibility(View.GONE);
+            if (arrowKeysContainer != null) arrowKeysContainer.setVisibility(View.VISIBLE);
+
+            // Hide action buttons in landscape if present
+            View actionButtons = findViewById(R.id.constraintLayout3);
+            if (actionButtons != null) actionButtons.setVisibility(View.GONE);
+
+            // Hide action buttons in portrait if present
+            int[] portraitActionButtons = {R.id.btnA, R.id.btnB, R.id.btnX, R.id.btnY};
+            for (int id : portraitActionButtons) {
+                View v = findViewById(id);
+                if (v != null) v.setVisibility(View.GONE);
+            }
+        } else {
+            if (joystick != null) joystick.setVisibility(View.VISIBLE);
+            if (arrowKeysContainer != null) arrowKeysContainer.setVisibility(View.GONE);
+
+            View actionButtons = findViewById(R.id.constraintLayout3);
+            if (actionButtons != null) actionButtons.setVisibility(View.VISIBLE);
+
+            int[] portraitActionButtons = {R.id.btnA, R.id.btnB, R.id.btnX, R.id.btnY};
+            for (int id : portraitActionButtons) {
+                View v = findViewById(id);
+                if (v != null) v.setVisibility(View.VISIBLE);
+            }
+        }
+
+        // Apply Auto mode visual block
+        float alpha = useAuto ? 0.3f : 1.0f;
+        if (joystick != null) {
+            joystick.setAlpha(alpha);
+        }
+        if (arrowKeysContainer != null) {
+            arrowKeysContainer.setAlpha(alpha);
+        }
+        View actionButtons = findViewById(R.id.constraintLayout3);
+        if (actionButtons != null) {
+            actionButtons.setAlpha(alpha);
+        }
+        int[] actionIds = {R.id.btnA, R.id.btnB, R.id.btnX, R.id.btnY};
+        for (int id : actionIds) {
+            View v = findViewById(id);
+            if (v != null) v.setAlpha(alpha);
+        }
+    }
+
+    @SuppressLint("ClickableViewAccessibility")
+    private void setupGamingButton(int id, String pressCmd, String releaseCmd, String label, TextView display) {
         Button btn = findViewById(id);
         if (btn != null) {
-            btn.setOnClickListener(v -> {
-                v.performHapticFeedback(HapticFeedbackConstants.VIRTUAL_KEY);
-                sendData(command);
-                if (display != null) {
-                    display.setText(label);
+            btn.setOnTouchListener((v, event) -> {
+                if (useAuto) return false; // Blocked in Auto mode
+                switch (event.getAction()) {
+                    case MotionEvent.ACTION_DOWN:
+                        v.performHapticFeedback(HapticFeedbackConstants.VIRTUAL_KEY);
+                        sendData(pressCmd);
+                        if (display != null) display.setText(label);
+                        return true;
+                    case MotionEvent.ACTION_UP:
+                    case MotionEvent.ACTION_CANCEL:
+                        sendData(releaseCmd);
+                        if (display != null) display.setText("STOP");
+                        return true;
                 }
+                return false;
+            });
+        }
+    }
+
+    @SuppressLint("ClickableViewAccessibility")
+    private void setupArrowButton(int id, String pressCmd, String releaseCmd, String label, TextView display) {
+        Button btn = findViewById(id);
+        if (btn != null) {
+            btn.setOnTouchListener((v, event) -> {
+                if (useAuto) return false; // Blocked in Auto mode
+                switch (event.getAction()) {
+                    case MotionEvent.ACTION_DOWN:
+                        v.performHapticFeedback(HapticFeedbackConstants.VIRTUAL_KEY);
+                        sendData(pressCmd);
+                        if (display != null) display.setText(label);
+                        return true;
+                    case MotionEvent.ACTION_UP:
+                    case MotionEvent.ACTION_CANCEL:
+                        sendData(releaseCmd);
+                        if (display != null) display.setText("STOP");
+                        return true;
+                }
+                return false;
             });
         }
     }
