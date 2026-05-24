@@ -36,22 +36,22 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_margin="8dp"
-            app:backgroundTint="#2196F3"
+            app:backgroundTint="?attr/colorPrimary"
             app:elevation="4dp"
             app:fabSize="mini"
             app:srcCompat="@drawable/connected"
-            app:tint="#FFFFFF" />
+            app:tint="?attr/colorOnPrimary" />
 
         <com.google.android.material.floatingactionbutton.FloatingActionButton
-            android:id="@+id/settingsBtn"
+            android:id="@+id/aboutBtn"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_margin="8dp"
-            app:backgroundTint="#F5F5F5"
+            app:backgroundTint="?attr/colorSurface"
             app:elevation="4dp"
             app:fabSize="mini"
-            app:srcCompat="@android:drawable/ic_menu_preferences"
-            app:tint="#616161" />
+            app:srcCompat="@android:drawable/ic_dialog_info"
+            app:tint="?attr/colorOnSurface" />
     </LinearLayout>
 
     <!-- Main Content Area -->
@@ -69,7 +69,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Kalika Namuna S.S"
-            android:textColor="#212121"
+            android:textColor="#000000"
             android:textSize="22sp"
             android:textStyle="bold"
             app:layout_constraintEnd_toEndOf="parent"
@@ -81,7 +81,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Control Panel"
-            android:textColor="#757575"
+            android:textColor="#5F5F5F"
             android:textSize="12sp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"

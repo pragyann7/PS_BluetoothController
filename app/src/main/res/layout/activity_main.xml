@@ -38,7 +38,7 @@
                 android:layout_height="wrap_content"
                 android:gravity="center"
                 android:text="Kalika Namuna S.S"
-                android:textColor="#212121"
+                android:textColor="@color/black"
                 android:textSize="32sp"
                 android:textStyle="bold" />
 
@@ -46,10 +46,10 @@
                 android:id="@+id/subTitle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:gravity="center"
                 android:text="Control Panel"
-                android:textColor="#757575"
-                android:textSize="16sp"
-                android:gravity="center" />
+                android:textColor="#5F5F5F"
+                android:textSize="16sp" />
 
             <GridLayout
                 android:layout_width="match_parent"
@@ -127,20 +127,20 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_margin="16dp"
-            app:backgroundTint="#2196F3"
+            app:backgroundTint="?attr/colorPrimary"
             app:elevation="6dp"
             app:srcCompat="@drawable/connected"
-            app:tint="#FFFFFF" />
+            app:tint="?attr/colorOnPrimary" />
 
         <com.google.android.material.floatingactionbutton.FloatingActionButton
-            android:id="@+id/settingsBtn"
+            android:id="@+id/aboutBtn"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_margin="16dp"
-            app:backgroundTint="#F5F5F5"
+            app:backgroundTint="?attr/colorSurfaceVariant"
             app:elevation="6dp"
-            app:srcCompat="@android:drawable/ic_menu_preferences"
-            app:tint="#616161" />
+            app:srcCompat="@android:drawable/ic_dialog_info"
+            app:tint="?attr/colorOnSurfaceVariant" />
     </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

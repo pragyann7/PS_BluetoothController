@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="24dp">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="PS Controller"
+            android:textColor="?android:attr/textColorPrimary"
+            android:textSize="24sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:text="Version 1.0.0"
+            android:textColor="?android:attr/textColorSecondary"
+            android:textSize="14sp" />
+
+        <View
+            android:layout_width="40dp"
+            android:layout_height="4dp"
+            android:layout_marginTop="16dp"
+            android:background="?attr/colorPrimary" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:lineSpacingExtra="4dp"
+            android:text="This app was developed for students who were participating the workshop organized by Kalika Namuna Secondary School. It provides a comprehensive interface for controlling Bluetooth-enabled devices and robots."
+            android:textColor="?android:attr/textColorPrimary"
+            android:textSize="15sp" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:text="Key Features"
+            android:textColor="?android:attr/textColorPrimary"
+            android:textSize="18sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:lineSpacingExtra="4dp"
+            android:text="• Universal Bluetooth Connectivity\n• Pro Gaming Pad (Joystick &amp; Arrow keys)\n• Precision Dimmer for PWM control\n• Customizable digital switch board\n• Real-time Terminal monitoring\n• Autonomous &amp; Manual mode toggles"
+            android:textColor="?android:attr/textColorSecondary"
+            android:textSize="14sp" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:text="Developer"
+            android:textColor="?android:attr/textColorPrimary"
+            android:textSize="18sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:text="Pragyan.dev"
+            android:textColor="?attr/colorPrimary"
+            android:textSize="14sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:text="Connect"
+            android:textColor="?android:attr/textColorPrimary"
+            android:textSize="18sp"
+            android:textStyle="bold" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnGithub"
+            style="@style/Widget.MaterialComponents.Button.TextButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:gravity="start|center_vertical"
+            android:text="GitHub: github.com/pragyann7"
+            android:textAllCaps="false"
+            android:textColor="?android:attr/textColorSecondary"
+            app:icon="@android:drawable/ic_menu_compass"
+            app:iconPadding="12dp"
+            app:iconTint="?android:attr/textColorSecondary" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnInstagram"
+            style="@style/Widget.MaterialComponents.Button.TextButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:gravity="start|center_vertical"
+            android:text="Instagram: @pragyan_stha"
+            android:textAllCaps="false"
+            android:textColor="?android:attr/textColorSecondary"
+            app:icon="@android:drawable/ic_menu_camera"
+            app:iconPadding="12dp"
+            app:iconTint="?android:attr/textColorSecondary" />
+
+    </LinearLayout>
+
+</androidx.core.widget.NestedScrollView>

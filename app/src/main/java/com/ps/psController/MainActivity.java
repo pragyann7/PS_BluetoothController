@@ -7,6 +7,8 @@ import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothSocket;
 import android.content.pm.PackageManager;
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.view.HapticFeedbackConstants;
@@ -77,6 +79,7 @@ public class MainActivity extends AppCompatActivity {
         Button btnDimmer = findViewById(R.id.button2);
         Button btnSwitches = findViewById(R.id.button3);
         FloatingActionButton btnBluetooth = findViewById(R.id.bluetoothBtn);
+        FloatingActionButton btnAbout = findViewById(R.id.aboutBtn);
 
         if (btnJoystick != null) btnJoystick.setOnClickListener(v -> {
             v.performHapticFeedback(HapticFeedbackConstants.VIRTUAL_KEY);
@@ -93,6 +96,10 @@ public class MainActivity extends AppCompatActivity {
         if (btnBluetooth != null) btnBluetooth.setOnClickListener(v -> {
             v.performHapticFeedback(HapticFeedbackConstants.VIRTUAL_KEY);
             initScanLayout();
+        });
+        if (btnAbout != null) btnAbout.setOnClickListener(v -> {
+            v.performHapticFeedback(HapticFeedbackConstants.VIRTUAL_KEY);
+            showAboutDialog();
         });
     }
 
@@ -435,6 +442,32 @@ public class MainActivity extends AppCompatActivity {
         builder.setNegativeButton("Cancel", (dialog, which) -> dialog.cancel());
 
         builder.show();
+    }
+
+    private void showAboutDialog() {
+        View aboutView = getLayoutInflater().inflate(R.layout.dialog_about, null);
+        
+        View btnGithub = aboutView.findViewById(R.id.btnGithub);
+        View btnInstagram = aboutView.findViewById(R.id.btnInstagram);
+
+        if (btnGithub != null) {
+            btnGithub.setOnClickListener(v -> {
+                Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://github.com/pragyann7"));
+                startActivity(intent);
+            });
+        }
+
+        if (btnInstagram != null) {
+            btnInstagram.setOnClickListener(v -> {
+                Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://instagram.com/pragyan_stha"));
+                startActivity(intent);
+            });
+        }
+
+        new AlertDialog.Builder(this)
+                .setView(aboutView)
+                .setPositiveButton("Close", null)
+                .show();
     }
 
     private void addSwitchToView(ViewGroup container, SwitchData data) {
