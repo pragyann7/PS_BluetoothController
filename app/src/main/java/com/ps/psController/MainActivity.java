@@ -120,10 +120,16 @@ public class MainActivity extends AppCompatActivity {
             });
         }
 
-        if (btnScan != null) btnScan.setOnClickListener(v -> {
-            v.performHapticFeedback(HapticFeedbackConstants.VIRTUAL_KEY);
-            showPairedDevices();
-        });
+        // Show paired devices immediately
+        showPairedDevices();
+
+        if (btnScan != null) {
+            btnScan.setText("Refresh Paired Devices");
+            btnScan.setOnClickListener(v -> {
+                v.performHapticFeedback(HapticFeedbackConstants.VIRTUAL_KEY);
+                showPairedDevices();
+            });
+        }
         if (btnBack != null) btnBack.setOnClickListener(v -> {
             v.performHapticFeedback(HapticFeedbackConstants.VIRTUAL_KEY);
             initMainLayout();
@@ -150,17 +156,17 @@ public class MainActivity extends AppCompatActivity {
         JoystickView joystick = findViewById(R.id.joystickView);
         TextView outputDisplay = findViewById(R.id.outputDisplay);
         View arrowKeysContainer = findViewById(R.id.arrowKeysContainer);
-        SwitchMaterial arrowSwitch = findViewById(R.id.switch1);
+        Button btnToggleMode = findViewById(R.id.btnToggleMode);
 
-        if (arrowSwitch != null) {
-            arrowSwitch.setChecked(!useArrows);
-
-            // Initial visibility update
+        if (btnToggleMode != null) {
+            btnToggleMode.setText(useArrows ? "Switch to Joystick" : "Switch to Arrows");
             updateControlsVisibility(useArrows, joystick, arrowKeysContainer);
 
-            arrowSwitch.setOnCheckedChangeListener((buttonView, isChecked) -> {
-                useArrows = !isChecked;
-                updateControlsVisibility(!isChecked, joystick, arrowKeysContainer);
+            btnToggleMode.setOnClickListener(v -> {
+                useArrows = !useArrows;
+                v.performHapticFeedback(HapticFeedbackConstants.VIRTUAL_KEY);
+                btnToggleMode.setText(useArrows ? "Switch to Joystick" : "Switch to Arrows");
+                updateControlsVisibility(useArrows, joystick, arrowKeysContainer);
             });
         }
 
@@ -169,14 +175,17 @@ public class MainActivity extends AppCompatActivity {
         setupArrowButton(R.id.btnLeft, "-100,0\n", "0,0\n", "LEFT", outputDisplay);
         setupArrowButton(R.id.btnRight, "100,0\n", "0,0\n", "RIGHT", outputDisplay);
 
-        SwitchMaterial autoSwitch = findViewById(R.id.switchAuto);
-        if (autoSwitch != null) {
-            autoSwitch.setChecked(useAuto);
-            autoSwitch.setOnCheckedChangeListener((buttonView, isChecked) -> {
-                useAuto = isChecked;
-                buttonView.performHapticFeedback(HapticFeedbackConstants.VIRTUAL_KEY);
+        Button btnToggleAuto = findViewById(R.id.btnToggleAuto);
+        if (btnToggleAuto != null) {
+            btnToggleAuto.setText(useAuto ? "Switch to Manual" : "Switch to Auto");
+            btnToggleAuto.setOnClickListener(v -> {
+                useAuto = !useAuto;
+                v.performHapticFeedback(HapticFeedbackConstants.VIRTUAL_KEY);
+                btnToggleAuto.setText(useAuto ? "Switch to Manual" : "Switch to Auto");
+                
                 updateControlsVisibility(useArrows, joystick, arrowKeysContainer);
-                if (isChecked) {
+                
+                if (useAuto) {
                     sendData("A_MODE\n");
                     if (outputDisplay != null) {
                         outputDisplay.setText("AUTO MODE");
@@ -563,33 +572,68 @@ public class MainActivity extends AppCompatActivity {
             return;
         }
 
-        try {
-            socket = device.createRfcommSocketToServiceRecord(uuid);
-            socket.connect();
-            outputStream = socket.getOutputStream();
-            isConnected = true;
-            connectedDevice = device;
-            updateStatusIndicator();
-            deviceAdapter.notifyDataSetChanged();
-            Toast.makeText(this, "Connected to " + device.getName(), Toast.LENGTH_SHORT).show();
-        } catch (Exception e) {
-            isConnected = false;
-            connectedDevice = null;
-            updateStatusIndicator();
-            deviceAdapter.notifyDataSetChanged();
-            Toast.makeText(this, "Connection Failed", Toast.LENGTH_SHORT).show();
+        // Show modern connecting dialog
+        View dialogView = getLayoutInflater().inflate(R.layout.dialog_loading, null);
+        TextView tvMessage = dialogView.findViewById(R.id.loadingMessage);
+        if (tvMessage != null) {
+            String name = (device.getName() != null) ? device.getName() : device.getAddress();
+            tvMessage.setText("Connecting to " + name);
         }
+
+        AlertDialog loadingDialog = new AlertDialog.Builder(this)
+                .setView(dialogView)
+                .setCancelable(false)
+                .create();
+        
+        if (loadingDialog.getWindow() != null) {
+            loadingDialog.getWindow().setBackgroundDrawableResource(android.R.color.transparent);
+        }
+
+        loadingDialog.show();
+
+        new Thread(() -> {
+            boolean success = false;
+            try {
+                socket = device.createRfcommSocketToServiceRecord(uuid);
+                socket.connect();
+                outputStream = socket.getOutputStream();
+                success = true;
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
+            final boolean finalSuccess = success;
+            runOnUiThread(() -> {
+                loadingDialog.dismiss();
+                if (finalSuccess) {
+                    isConnected = true;
+                    connectedDevice = device;
+                    updateStatusIndicator();
+                    deviceAdapter.notifyDataSetChanged();
+                    Toast.makeText(this, "Connected to " + device.getName(), Toast.LENGTH_SHORT).show();
+                } else {
+                    isConnected = false;
+                    connectedDevice = null;
+                    updateStatusIndicator();
+                    deviceAdapter.notifyDataSetChanged();
+                    Toast.makeText(this, "Connection Failed", Toast.LENGTH_SHORT).show();
+                }
+            });
+        }).start();
     }
 
     private void updateStatusIndicator() {
         TextView tvStatus = findViewById(R.id.connectionStatus);
+        android.widget.ImageView ivStatus = findViewById(R.id.statusIcon);
         if (tvStatus != null) {
             if (isConnected) {
                 tvStatus.setText("Connected");
                 tvStatus.setTextColor(android.graphics.Color.parseColor("#4CAF50")); // Green
+                if (ivStatus != null) ivStatus.setImageResource(R.drawable.connected);
             } else {
                 tvStatus.setText("Disconnected");
                 tvStatus.setTextColor(android.graphics.Color.parseColor("#F44336")); // Red
+                if (ivStatus != null) ivStatus.setImageResource(R.drawable.disconnected);
             }
         }
     }

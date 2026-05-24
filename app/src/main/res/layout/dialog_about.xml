@@ -37,7 +37,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
             android:lineSpacingExtra="4dp"
-            android:text="This app was developed for students who were participating the workshop organized by Kalika Namuna Secondary School. It provides a comprehensive interface for controlling Bluetooth-enabled devices and robots."
+            android:text="This app was developed for students who were participating the Robotic Workshop organized by Kalika Namuna Secondary School. It provides a comprehensive interface for controlling Bluetooth-enabled devices and robots."
             android:textColor="?android:attr/textColorPrimary"
             android:textSize="15sp" />
 
